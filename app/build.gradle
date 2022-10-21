@@ -2,17 +2,17 @@ import com.ys.jetsurvey.buildsrc.Libs
 
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
 }
 
 android {
     namespace 'com.ys.jetsurvey'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.ys.jetsurvey"
         minSdk 23
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -47,7 +47,6 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion Libs.Kotlin.version
         kotlinCompilerExtensionVersion Libs.AndroidX.Compose.version
     }
 
@@ -74,10 +73,12 @@ dependencies {
     implementation Libs.AndroidX.Material.material
     implementation Libs.material
 
+    implementation Libs.AndroidX.Compose.ui
+    implementation Libs.AndroidX.Compose.tooling
     implementation Libs.AndroidX.Compose.layout
     implementation Libs.AndroidX.Compose.material
     implementation Libs.AndroidX.Compose.materialIconsExtended
-    implementation Libs.AndroidX.Compose.tooling
+    implementation Libs.AndroidX.Compose.preview
     implementation Libs.AndroidX.Compose.runtime
     implementation Libs.AndroidX.Compose.runtimeLivedata
 

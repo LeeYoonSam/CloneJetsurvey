@@ -18,7 +18,7 @@ object Libs {
     }
 
     object Kotlin {
-        private const val version = "1.6.10"
+        private const val version = "1.7.0"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
         const val extensions = "org.jetbrains.kotlin:kotlin-android-extensions:$version"
@@ -26,17 +26,18 @@ object Libs {
 
     object AndroidX {
         const val appcompat = "androidx.appcompat:appcompat:1.5.1"
-        const val coreKtx = "androidx.core:core-ktx:1.9.0"
+        const val coreKtx = "androidx.core:core-ktx:1.8.0"
 
         object Compose {
             const val snapshot = ""
-            const val version = "1.2.1"
+            const val version = "1.2.0"
 
             @get:JvmStatic
             val snapshotUrl: String
                 get() = "https://androidx.dev/snapshots/builds/$snapshot/artifacts/repository/"
 
             const val ui = "androidx.compose.ui:ui:$version"
+            const val tooling = "androidx.compose.ui:ui-tooling:$version"
             const val preview = "androidx.compose.ui:ui-tooling-preview:$version"
             const val foundation = "androidx.compose.foundation:foundation:$version"
             const val layout = "androidx.compose.foundation:foundation-layout:$version"
@@ -44,7 +45,6 @@ object Libs {
             const val materialIconsExtended = "androidx.compose.material:material-icons-extended:$version"
             const val runtime = "androidx.compose.runtime:runtime:$version"
             const val runtimeLivedata = "androidx.compose.runtime:runtime-livedata:$version"
-            const val tooling = "androidx.ui:ui-tooling:$version"
             const val test = "androidx.compose.test:test-core:$version"
             const val uiTest = "androidx.ui:ui-test:$version"
         }

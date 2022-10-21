@@ -2,14 +2,18 @@ import com.ys.jetsurvey.buildsrc.Libs
 import com.ys.jetsurvey.buildsrc.Versions
 
 buildscript {
-    ext {
-        compose_ui_version = '1.2.1'
+    repositories {
+        google()
+        mavenCentral()
     }
-}// Top-level build file where you can add configuration options common to all sub-projects/modules.
+    dependencies {
+        classpath Libs.androidGradlePlugin
+        classpath Libs.Kotlin.gradlePlugin
+    }
+
+}
+
 plugins {
-    id 'com.android.application' version '7.3.1' apply false
-    id 'com.android.library' version '7.3.1' apply false
-    id 'org.jetbrains.kotlin.android' version '1.6.10' apply false
     id 'com.diffplug.spotless' version '5.7.0'
 }
 
