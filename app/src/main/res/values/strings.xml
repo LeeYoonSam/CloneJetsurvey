@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">CloneJetsurvey</string>
+    <string name="app_tagline">Better surveys with Jetpack Compose</string>
+    <string name="show_survey">Move to Survey</string>
 
     <string name="dismiss">DISMISS</string>
     <string name="next">NEXT</string>

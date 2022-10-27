@@ -74,6 +74,7 @@ dependencies {
     implementation Libs.material
 
     implementation Libs.AndroidX.Compose.ui
+    implementation Libs.AndroidX.Compose.foundation
     implementation Libs.AndroidX.Compose.tooling
     implementation Libs.AndroidX.Compose.layout
     implementation Libs.AndroidX.Compose.material
