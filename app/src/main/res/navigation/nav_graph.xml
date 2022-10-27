@@ -2,10 +2,10 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/welcomeFragment">
+    app:startDestination="@id/welcome_fragment">
 
     <fragment
-        android:id="@+id/welcomeFragment"
+        android:id="@+id/welcome_fragment"
         android:name="com.ys.jetsurvey.welcom.WelcomeFragment"
         android:label="Welcome" />
 
