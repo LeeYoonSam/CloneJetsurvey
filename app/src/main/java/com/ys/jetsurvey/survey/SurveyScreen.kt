@@ -1,5 +1,6 @@
 package com.ys.jetsurvey.survey
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +22,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -30,7 +33,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ys.jetsurvey.R
 
-@Suppress("UNUSED_PARAMETER")
 @Composable
 fun SurveyQuestionScreen(
     questions: SurveyState.Questions,
@@ -38,7 +40,43 @@ fun SurveyQuestionScreen(
     onDonePressed: () -> Unit,
     onBackPressed: () -> Unit
 ) {
-
+    val questionState = remember(questions.currentQuestionIndex) {
+        questions.questionsState[questions.currentQuestionIndex]
+    }
+    
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                SurveyTopAppBar(
+                    questionIndex = questionState.questionIndex,
+                    totalQuestionCount = questionState.totalQuestionsCount,
+                    onBackPressed = onBackPressed
+                )
+            },
+            content = { innerPadding ->
+                Question(
+                    question = questionState.question,
+                    answer = questionState.answer,
+                    onAnswer = {
+                               questionState.answer = it
+                        questionState.enableNext = true
+                    },
+                    onAction = onAction,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                )
+            },
+            bottomBar = {
+                SurveyBottomBar(
+                    questionState = questionState,
+                    onPreviousPressed = { questions.currentQuestionIndex-- },
+                    onNextPressed = { questions.currentQuestionIndex++ },
+                    onDonePressed = onDonePressed
+                )
+            }
+        )
+    }
 }
 
 @Composable
@@ -118,7 +156,7 @@ private fun TopAppBarTitle(
     Text(
         text = text,
         style = MaterialTheme.typography.caption,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -130,20 +168,26 @@ private fun SurveyTopAppBar(
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
 
-        Row {
-            TopAppBarTitle(
-                questionIndex = questionIndex,
-                totalQuestionsCount = totalQuestionCount,
-                modifier = Modifier
-                    .padding(vertical = 20.dp)
-                    .weight(1f)
-            )
-
-            IconButton(
-                onClick = onBackPressed,
-                modifier = Modifier.padding(horizontal = 12.dp)
+        Surface(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
-                Icon(imageVector = Icons.Filled.Close, contentDescription = null)
+                TopAppBarTitle(
+                    questionIndex = questionIndex,
+                    totalQuestionsCount = totalQuestionCount,
+                    modifier = Modifier
+                        .padding(vertical = 20.dp)
+                )
+            }
+
+            Row(horizontalArrangement = Arrangement.End) {
+                IconButton(
+                    onClick = onBackPressed,
+                    modifier = Modifier.padding(horizontal = 12.dp)
+                ) {
+                    Icon(imageVector = Icons.Filled.Close, contentDescription = null)
+                }
             }
         }
 
@@ -152,7 +196,7 @@ private fun SurveyTopAppBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
-            backgroundColor = MaterialTheme.colors.background
+            backgroundColor = MaterialTheme.colors.onSurface
         )
     }
 }
