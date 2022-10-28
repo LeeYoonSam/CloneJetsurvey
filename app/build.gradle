@@ -85,6 +85,8 @@ dependencies {
 
     implementation Libs.Accompanist.coil
 
+    testImplementation Libs.junit
+
     androidTestImplementation Libs.junit
     androidTestImplementation Libs.AndroidX.Test.core
     androidTestImplementation Libs.AndroidX.Test.espressoCore
