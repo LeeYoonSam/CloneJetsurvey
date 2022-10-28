@@ -9,4 +9,9 @@
         android:name="com.ys.jetsurvey.welcom.WelcomeFragment"
         android:label="Welcome" />
 
+    <fragment
+        android:id="@+id/survey_fragment"
+        android:name="com.ys.jetsurvey.survey.SurveyFragment"
+        android:label="Survey" />
+
 </navigation>
