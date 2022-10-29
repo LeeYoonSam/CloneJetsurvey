@@ -1,6 +1,8 @@
 package com.ys.jetsurvey.survey
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -8,9 +10,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.RadioButton
+import androidx.compose.material.RadioButtonColors
+import androidx.compose.material.RadioButtonDefaults
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -65,10 +75,78 @@ fun Question(
         }
 
         when (question.answer) {
-            is PossibleAnswer.SingleChoice -> {}
+            is PossibleAnswer.SingleChoice -> SingleChoiceQuestion(
+                possibleAnswer = question.answer,
+                answer = answer as Answer.SingleChoice?,
+                onAnswerSelected = { answer -> onAnswer(Answer.SingleChoice(answer)) },
+                modifier = Modifier.fillMaxWidth()
+            )
             is PossibleAnswer.MultipleChoice -> {}
             is PossibleAnswer.Action -> {}
             is PossibleAnswer.Slider -> {}
+        }
+    }
+}
+
+@Composable
+private fun SingleChoiceQuestion(
+    possibleAnswer: PossibleAnswer.SingleChoice,
+    answer: Answer.SingleChoice?,
+    onAnswerSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val options = possibleAnswer.optionsStringRes.associateBy { stringResource(id = it) }
+
+    val radioOptions = options.keys.toList()
+
+    val selected = if (answer != null) {
+        stringResource(id = answer.answer)
+    } else {
+        null
+    }
+
+    val (selectedOption, onOptionSelected) = remember(answer) { mutableStateOf(selected) }
+
+    Column(modifier = modifier) {
+        radioOptions.forEach { text ->
+            val onClickHandle = {
+                onOptionSelected(text)
+                options[text]?.let { onAnswerSelected(it) }
+                Unit
+            }
+
+            val optionSelected = text == selectedOption
+            Surface(
+                shape = MaterialTheme.shapes.small,
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.12f)
+                ),
+                modifier = Modifier.padding(vertical = 8.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .selectable(
+                            selected = optionSelected,
+                            onClick = onClickHandle
+                        )
+                        .padding(vertical = 16.dp, horizontal = 24.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = text)
+
+                    RadioButton(
+                        selected = optionSelected,
+                        onClick = onClickHandle,
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = MaterialTheme.colors.primary
+                        )
+                    )
+                }
+
+            }
         }
     }
 }
