@@ -17,6 +17,7 @@ import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
+import androidx.compose.material.Slider
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -99,7 +100,12 @@ fun Question(
                 modifier = Modifier.fillMaxWidth()
             )
             is PossibleAnswer.Action -> {}
-            is PossibleAnswer.Slider -> {}
+            is PossibleAnswer.Slider -> SliderQuestion(
+                possibleAnswer = question.answer,
+                answer = answer as Answer.Slider?,
+                onAnswerSelected = { onAnswer(Answer.Slider(it)) },
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }
@@ -161,7 +167,6 @@ private fun SingleChoiceQuestion(
                         )
                     )
                 }
-
             }
         }
     }
@@ -218,5 +223,40 @@ private fun MultipleChoiceQuestion(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SliderQuestion(
+    possibleAnswer: PossibleAnswer.Slider,
+    answer: Answer.Slider?,
+    onAnswerSelected: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var sliderPosition by remember {
+        mutableStateOf(answer?.answerValue ?: possibleAnswer.defaultValue)
+    }
+
+    Row(modifier = modifier) {
+        Text(
+            text = stringResource(id = possibleAnswer.startText),
+            modifier = Modifier.align(Alignment.CenterVertically)
+        )
+        Slider(
+            value = sliderPosition,
+            onValueChange = {
+                sliderPosition = it
+                onAnswerSelected(it)
+            },
+            valueRange = possibleAnswer.range,
+            steps = possibleAnswer.steps,
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp)
+        )
+        Text(
+            text = stringResource(id = possibleAnswer.endText),
+            modifier = Modifier.align(Alignment.CenterVertically)
+        )
     }
 }
