@@ -58,7 +58,7 @@ fun SurveyQuestionScreen(
                     question = questionState.question,
                     answer = questionState.answer,
                     onAnswer = {
-                               questionState.answer = it
+                        questionState.answer = it
                         questionState.enableNext = true
                     },
                     onAction = onAction,
