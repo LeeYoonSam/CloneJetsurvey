@@ -72,6 +72,7 @@ dependencies {
     implementation Libs.AndroidX.Navigation.uiKtx
     implementation Libs.AndroidX.Material.material
     implementation Libs.material
+    implementation Libs.coil
 
     implementation Libs.AndroidX.Compose.ui
     implementation Libs.AndroidX.Compose.foundation

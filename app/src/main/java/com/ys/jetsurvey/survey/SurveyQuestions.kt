@@ -1,6 +1,10 @@
 package com.ys.jetsurvey.survey
 
+import androidx.annotation.StringRes
+import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,18 +12,29 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Slider
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,8 +42,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
+import com.ys.jetsurvey.R
+import dev.chrisbanes.accompanist.coil.CoilImage
 
 @Suppress("UNUSED_PARAMETER")
 @Composable
@@ -99,7 +123,13 @@ fun Question(
                 },
                 modifier = Modifier.fillMaxWidth()
             )
-            is PossibleAnswer.Action -> {}
+            is PossibleAnswer.Action -> ActionQuestion(
+                questionId = question.id,
+                possibleAnswer = question.answer,
+                answer = answer as Answer.Action?,
+                onAction = onAction,
+                modifier = Modifier.fillMaxWidth()
+            )
             is PossibleAnswer.Slider -> SliderQuestion(
                 possibleAnswer = question.answer,
                 answer = answer as Answer.Slider?,
@@ -224,6 +254,134 @@ private fun MultipleChoiceQuestion(
             }
         }
     }
+}
+
+@Composable
+private fun ActionQuestion(
+    questionId: Int,
+    possibleAnswer: PossibleAnswer.Action,
+    answer: Answer.Action?,
+    onAction: (Int, SurveyActionType) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    when (possibleAnswer.actionType) {
+        SurveyActionType.PICK_DATE -> {
+            DateQuestion(
+                questionId = questionId,
+                answerLabel = possibleAnswer.label,
+                answer = answer,
+                onAction = onAction,
+                modifier = modifier
+            )
+        }
+        SurveyActionType.TAKE_PHOTO -> {
+            PhotoQuestion(
+                questionId = questionId,
+                answer = answer,
+                onAction = onAction,
+                modifier = modifier
+            )
+        }
+        SurveyActionType.SELECT_CONTACT -> TODO()
+    }
+}
+
+@Composable
+private fun DateQuestion(
+    questionId: Int,
+    @StringRes answerLabel: Int,
+    answer: Answer.Action?,
+    onAction: (Int, SurveyActionType) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = { onAction(questionId, SurveyActionType.PICK_DATE) },
+        modifier = modifier.padding(vertical = 20.dp)
+    ) {
+        Text(text = stringResource(id = answerLabel))
+    }
+
+    if (answer != null && answer.result is SurveyActionResult.Date) {
+        Text(
+            text = stringResource(id = R.string.selected_date, answer.result.date),
+            style = MaterialTheme.typography.h4,
+            modifier = Modifier.padding(vertical = 20.dp)
+        )
+    }
+}
+
+@Composable
+private fun PhotoQuestion(
+    questionId: Int,
+    answer: Answer.Action?,
+    onAction: (Int, SurveyActionType) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val resource = if (answer != null) {
+        Icons.Filled.SwapHoriz
+    } else {
+        Icons.Filled.AddAPhoto
+    }
+
+    OutlinedButton(
+        onClick = { onAction(questionId, SurveyActionType.TAKE_PHOTO) },
+        modifier = modifier,
+        contentPadding = PaddingValues()
+    ) {
+        Column {
+            if (answer != null && answer.result is SurveyActionResult.Photo) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(answer.result.uri)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                PhotoDefaultImage(
+                    modifier = Modifier.padding(horizontal = 86.dp, vertical = 74.dp)
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.BottomCenter)
+                    .padding(vertical = 26.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(imageVector = resource, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(
+                        id = if (answer != null) {
+                            R.string.retake_photo
+                        } else {
+                            R.string.add_photo
+                        }
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PhotoDefaultImage(
+    lightTheme: Boolean = MaterialTheme.colors.isLight,
+    modifier: Modifier = Modifier
+) {
+    val assetId = if (lightTheme) {
+        R.drawable.ic_selfie_light
+    } else {
+        R.drawable.ic_selfie_dark
+    }
+    Image(
+        painter = painterResource(id = assetId),
+        contentDescription = "PhotoDefault",
+        modifier = modifier
+    )
 }
 
 @Composable

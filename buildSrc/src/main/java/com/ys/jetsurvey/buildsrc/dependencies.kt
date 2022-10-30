@@ -12,6 +12,8 @@ object Libs {
 
     const val material = "androidx.compose.material:material:1.2.1"
 
+    const val coil = "io.coil-kt:coil-compose:2.2.2"
+
     object Accompanist {
         private const val version = "0.3.3.1"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
